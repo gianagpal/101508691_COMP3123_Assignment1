@@ -4,14 +4,11 @@ const cors = require('cors');
 const userRoutes = require('./routes/userRoutes');
 const employeeRoutes = require('./routes/employeeRoutes');
 const errorHandler = require('./middleware/errorHandler');
+const cors = require('cors');
 
 const app = express();
 
-app.use(
-  cors({
-    origin: 'http://localhost:3001'
-  })
-);
+app.use(cors());
 
 app.use(express.json());
 
