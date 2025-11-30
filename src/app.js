@@ -4,7 +4,6 @@ const cors = require('cors');
 const userRoutes = require('./routes/userRoutes');
 const employeeRoutes = require('./routes/employeeRoutes');
 const errorHandler = require('./middleware/errorHandler');
-const cors = require('cors');
 
 const app = express();
 
