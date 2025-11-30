@@ -11,6 +11,10 @@ app.use(cors());
 
 app.use(express.json());
 
+app.get('/', (req, res) => {
+  res.send('Assignment 1 API is running ✅');
+});
+
 app.use('/uploads', express.static(path.join(__dirname, '..', 'uploads')));
 
 // Base paths per assignment
