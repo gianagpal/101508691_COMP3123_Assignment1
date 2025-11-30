@@ -5,43 +5,53 @@ const {
   createEmployee,
   getEmployee,
   updateEmployee,
-  deleteEmployee
+  deleteEmployee,
+  searchEmployees
 } = require('../controllers/employeeController');
 const { requireAuth } = require('../middleware/auth');
+const { upload } = require('../middleware/upload');
 
 const router = express.Router();
 
-// Apply optional protection to all employee endpoints
+// protect all employee routes
 router.use(requireAuth);
 
-// GET /api/v1/emp/employees (200)
+// 1. LIST all employees
 router.get('/employees', listEmployees);
 
-// POST /api/v1/emp/employees (201)
+// 2. 🔍 SEARCH must be BEFORE :eid
+router.get(
+  '/employees/search',
+  [
+    query('department').optional().trim(),
+    query('position').optional().trim()
+  ],
+  searchEmployees
+);
+
+// 3. CREATE
 router.post(
   '/employees',
+  upload.single('profile_picture'),
   [
-    body('first_name').trim().notEmpty().withMessage('first_name is required'),
-    body('last_name').trim().notEmpty().withMessage('last_name is required'),
-    body('email').trim().isEmail().withMessage('valid email is required'),
-    body('position').trim().notEmpty().withMessage('position is required'),
+    body('first_name').notEmpty().withMessage('first_name is required'),
+    body('last_name').notEmpty().withMessage('last_name is required'),
+    body('email').isEmail().withMessage('valid email is required'),
+    body('position').notEmpty().withMessage('position is required'),
     body('salary').isNumeric().withMessage('salary must be a number'),
-    body('date_of_joining').isISO8601().withMessage('date_of_joining must be a valid date'),
-    body('department').trim().notEmpty().withMessage('department is required')
+    body('date_of_joining').isISO8601().withMessage('invalid date'),
+    body('department').notEmpty().withMessage('department is required')
   ],
   createEmployee
 );
 
-// GET /api/v1/emp/employees/:eid (200)
-router.get(
-  '/employees/:eid',
-  [param('eid').isMongoId().withMessage('invalid employee id')],
-  getEmployee
-);
+// 4. GET by id – AFTER search
+router.get('/employees/:eid', getEmployee);
 
-// PUT /api/v1/emp/employees/:eid (200)
+// 5. UPDATE
 router.put(
   '/employees/:eid',
+  upload.single('profile_picture'),
   [
     param('eid').isMongoId().withMessage('invalid employee id'),
     body('email').optional().isEmail().withMessage('invalid email'),
@@ -51,11 +61,7 @@ router.put(
   updateEmployee
 );
 
-// DELETE /api/v1/emp/employees?eid=xxx (204)
-router.delete(
-  '/employees',
-  [query('eid').isMongoId().withMessage('invalid employee id')],
-  deleteEmployee
-);
+// 6. DELETE
+router.delete('/employees', deleteEmployee);
 
 module.exports = router;

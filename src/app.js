@@ -1,11 +1,21 @@
 const express = require('express');
+const path = require('path'); 
+const cors = require('cors');    
 const userRoutes = require('./routes/userRoutes');
 const employeeRoutes = require('./routes/employeeRoutes');
 const errorHandler = require('./middleware/errorHandler');
 
 const app = express();
 
+app.use(
+  cors({
+    origin: 'http://localhost:3001'
+  })
+);
+
 app.use(express.json());
+
+app.use('/uploads', express.static(path.join(__dirname, '..', 'uploads')));
 
 // Base paths per assignment
 app.use('/api/v1/user', userRoutes);

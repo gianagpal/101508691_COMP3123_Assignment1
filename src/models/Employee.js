@@ -8,7 +8,8 @@ const employeeSchema = new mongoose.Schema(
     position:        { type: String, required: true, trim: true },
     salary:          { type: Number, required: true },
     date_of_joining: { type: Date,   required: true },
-    department:      { type: String, required: true, trim: true }
+    department:      { type: String, required: true, trim: true },
+    profile_picture: { type: String, trim: true }
   },
   { timestamps: { createdAt: 'created_at', updatedAt: 'updated_at' } }
 );
